@@ -81,7 +81,7 @@ else:
     
 
 
-    if key_:
+    if key_input:
         key_ = get_key(key_input)
     else :
         if st.button("Générer une clé"):
