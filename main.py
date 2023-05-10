@@ -87,7 +87,8 @@ else:
                 mime='text/plain'
             )
 
-
+    key3 = st.text_input("Entrer votre clé de déchiffrement : ", value="")
+    key_ = key3
     if st.button("Déchiffrer"):
         st.write(b64encode(key_).decode())
         key_ =  b64encode(key_).decode()
