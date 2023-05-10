@@ -115,7 +115,7 @@ else:
             st.write(key_)
     
        # try:
-            decrypted_data, file_extension = decrypt_file(uploaded_file, key)
+            decrypted_data, file_extension = decrypt_file(uploaded_file, key_)
             decrypted_file = io.BytesIO(decrypted_data)
             st.download_button(
                 label="Télécharger le fichier déchiffré",
