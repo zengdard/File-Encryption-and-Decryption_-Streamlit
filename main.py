@@ -5,7 +5,7 @@ from base64 import b64encode, b64decode
 import os
 import hashlib
 import io
-import json
+import pickle
 def encrypt_message(message, key):
     cipher = AES.new(key, AES.MODE_EAX)
     ciphertext, tag = cipher.encrypt_and_digest(message.encode())
@@ -21,34 +21,29 @@ def decrypt_message(message_info, key):
 def get_key(key_str):
     return hashlib.sha256(key_str.encode()).digest()
 
+
 def encrypt_file(file, key):
-    cipher = AES.new(key, AES.MODE_EAX)
+    cipher = ChaCha20.new(key=key)
     data = file.getvalue()
-    ciphertext, tag = cipher.encrypt_and_digest(data)
+    ciphertext = cipher.encrypt(data)
 
     file_info = {
-        'nonce': b64encode(cipher.nonce).decode(),
-        'tag': b64encode(tag).decode(),
-        'ciphertext': b64encode(ciphertext).decode(),
+        'nonce': cipher.nonce,
+        'ciphertext': ciphertext,
         'extension': os.path.splitext(file.name)[1]
     }
 
-    return file_info
+    return pickle.dumps(file_info)
 
 def decrypt_file(file_info, key):
-    file_info_str = file_info.decode()
+    file_info_dict = pickle.loads(file_info)
+    nonce = file_info_dict['nonce']
+    ciphertext = file_info_dict['ciphertext']
 
-    # Load string as JSON
-    file_info_dict = json.loads(file_info_str)
-    nonce = b64decode(file_info['nonce'])
-    tag = b64decode(file_info['tag'])
-    ciphertext = b64decode(file_info['ciphertext'])
+    cipher = ChaCha20.new(key=key, nonce=nonce)
+    data = cipher.decrypt(ciphertext)
 
-    cipher = AES.new(key, AES.MODE_EAX, nonce=nonce)
-    data = cipher.decrypt_and_verify(ciphertext, tag)
-
-    return data, file_info['extension']
-
+    return data, file_info_dict['extension']
 
 st.title("Moulin - Chiffrement et déchiffrement de textes et fichiers")
 
