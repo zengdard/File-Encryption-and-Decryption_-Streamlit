@@ -104,17 +104,17 @@ else:
 
     if st.button("Déchiffrer"):
         if uploaded_file and key:
-        try: 
-            decrypted_data = decrypt_file(uploaded_file.read(), key)
-            decrypted_file = io.BytesIO(decrypted_data)
-            file_name = uploaded_file.name[:-4] if uploaded_file.name.endswith('.enc') else uploaded_file.name
-            st.success("Fichier déchiffré !")
+            try: 
+                decrypted_data = decrypt_file(uploaded_file.read(), key)
+                decrypted_file = io.BytesIO(decrypted_data)
+                file_name = uploaded_file.name[:-4] if uploaded_file.name.endswith('.enc') else uploaded_file.name
+                st.success("Fichier déchiffré !")
 
-            st.download_button(
-            label="Télécharger le fichier déchiffré",
-            data=decrypted_file,
-            file_name=f'decrypted_{file_name}',
-            mime='application/octet-stream'
-            )
-        except: 
-                 st.warning("Nous avons rencontré un problème lors du déchiffrement")
+                st.download_button(
+                label="Télécharger le fichier déchiffré",
+                data=decrypted_file,
+                file_name=f'decrypted_{file_name}',
+                mime='application/octet-stream'
+                )
+            except: 
+                     st.warning("Nous avons rencontré un problème lors du déchiffrement")
