@@ -88,13 +88,17 @@ else:
 
     if st.button("Chiffrer"):
          if uploaded_file and key:
-            decrypted_data = decrypt_file(uploaded_file.read(), key)
-            decrypted_file = io.BytesIO(decrypted_data)
-            file_name = uploaded_file.name[:-4] if uploaded_file.name.endswith('.enc') else uploaded_file.name
+            file_bytes = uploaded_file.read()
+            file_to_encrypt = io.BytesIO(file_bytes)
+
+            encrypted_file = encrypt_file(file_to_encrypt, key)
+            st.success("Fichier chiffré !")
+
+            # Offer the encrypted file for download
             st.download_button(
-                label="Télécharger le fichier déchiffré",
-                data=decrypted_file,
-                file_name=f'decrypted_{file_name}',
+                label="Télécharger le fichier chiffré",
+                data=encrypted_file,
+                file_name=f'{uploaded_file.name}.enc',
                 mime='application/octet-stream'
             )
 
@@ -102,9 +106,10 @@ else:
         if uploaded_file and key:
             decrypted_data = decrypt_file(uploaded_file.read(), key)
             decrypted_file = io.BytesIO(decrypted_data)
+            file_name = uploaded_file.name[:-4] if uploaded_file.name.endswith('.enc') else uploaded_file.name
             st.download_button(
                 label="Télécharger le fichier déchiffré",
                 data=decrypted_file,
-                file_name=f'decrypted_{uploaded_file.name}',
+                file_name=f'decrypted_{file_name}',
                 mime='application/octet-stream'
             )
