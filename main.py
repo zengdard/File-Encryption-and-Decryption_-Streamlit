@@ -89,6 +89,7 @@ else:
 
 
     if st.button("Déchiffrer"):
+        print(key)
         if key:
             key = hashlib.sha256(key.encode()).digest()
             
