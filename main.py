@@ -67,8 +67,9 @@ else:
         key = hashlib.sha256(key.encode()).digest()
     else :
         if st.button("Générer une clé"):
-            key = get_random_bytes(32)
-            st.success(f"Clé générée (Gardée la précieusement nous ne la sauvegarderons pas ! ): {b64encode(key).decode()}")
+            key1 = get_random_bytes(32)
+            key2 = hashlib.sha256(key.encode()).digest()
+            st.success(f"Clé générée (Gardée la précieusement nous ne la sauvegarderons pas ! ): {b64encode(key1).decode()}")
 
     uploaded_file = st.file_uploader("Choisissez un fichier à chiffrer", type=["png", "jpg", "txt", "pdf", "enc"])
 
@@ -88,7 +89,7 @@ else:
 
 
     if st.button("Déchiffrer"):
-        if len(key) =! 256 :
+        if key:
             key = hashlib.sha256(key.encode()).digest()
             
             try:
