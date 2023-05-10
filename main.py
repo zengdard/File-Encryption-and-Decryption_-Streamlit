@@ -62,7 +62,7 @@ if page == "Chiffrement de texte":
 else:
     st.header("Chiffrement et déchiffrement de fichiers")
     
-    key = st.text_input("Entrer votre clé", value="")
+    key_ = st.text_input("Entrer votre clé", value="")
     if key:
         key = hashlib.sha256(key.encode()).digest()
     else :
@@ -89,13 +89,13 @@ else:
 
 
     if st.button("Déchiffrer"):
-        st.write(key)
-        if key:
-            key = hashlib.sha256(key.encode()).digest()
+        st.write(key_)
+        if key_:
+            key_ = hashlib.sha256(key_.encode()).digest()
             
             try:
                 file_info = eval(file_info_text)
-                decrypted_data = decrypt_file(file_info, key)
+                decrypted_data = decrypt_file(file_info, key_)
 
                 # Get the file extension from the decrypted file info
                 file_extension = file_info['extension']
