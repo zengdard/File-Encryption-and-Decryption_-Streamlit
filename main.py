@@ -63,7 +63,7 @@ else:
     st.header("Chiffrement et déchiffrement de fichiers")
     
     key_ = st.text_input("Entrer votre clé", value="")
-    if key:
+    if key_:
         key = hashlib.sha256(key.encode()).digest()
     else :
         if st.button("Générer une clé"):
