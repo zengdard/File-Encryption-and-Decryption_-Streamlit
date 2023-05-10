@@ -89,7 +89,8 @@ else:
 
 
     if st.button("Déchiffrer"):
-        st.write(key_)
+        st.write(b64encode(key_).decode())
+        key_ =  b64encode(key).decode()
         if key_:
             key_ = hashlib.sha256(key_.encode()).digest()
             
