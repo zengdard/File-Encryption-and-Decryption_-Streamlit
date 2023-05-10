@@ -64,7 +64,7 @@ else:
     key = st.text_input("Entrer votre clé", value="")
     if key:
         key = hashlib.sha256(key.encode()).digest()
-    else key:
+    else :
         if st.button("Générer une clé"):
             key = get_random_bytes(32)
             st.success(f"Clé générée (Gardée la précieusement nous ne la sauvegarderons pas ! ): {b64encode(key).decode()}")
