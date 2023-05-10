@@ -78,11 +78,11 @@ if page == "Chiffrement de texte":
 else:
     st.header("Chiffrement et déchiffrement de fichiers")
     key_input = st.text_input("Entrer votre clé de chiffrement")
-    key_ = get_key(key_input)
+    
 
 
     if key_:
-        key_ = hashlib.sha256(key_.encode()).digest()
+        key_ = get_key(key_input)
     else :
         if st.button("Générer une clé"):
             key1 = get_random_bytes(32)
