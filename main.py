@@ -1,5 +1,6 @@
 import streamlit as st
 from Crypto.Cipher import AES
+from Crypto.Cipher import ChaCha20
 from Crypto.Random import get_random_bytes
 from base64 import b64encode, b64decode
 import os
