@@ -4,6 +4,7 @@ from Crypto.Random import get_random_bytes
 from base64 import b64encode, b64decode
 import os
 import hashlib
+import io
 
 def encrypt_message(message, key):
     cipher = AES.new(key, AES.MODE_EAX)
