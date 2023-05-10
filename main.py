@@ -64,18 +64,18 @@ else:
     
     key_ = st.text_input("Entrer votre clé", value="")
     if key_:
-        key = hashlib.sha256(key.encode()).digest()
+        key_ = hashlib.sha256(key_.encode()).digest()
     else :
         if st.button("Générer une clé"):
             key1 = get_random_bytes(32)
-            key2 = hashlib.sha256(key.encode()).digest()
+            key2 = hashlib.sha256(key_.encode()).digest()
             st.success(f"Clé générée (Gardée la précieusement nous ne la sauvegarderons pas ! ): {b64encode(key1).decode()}")
 
     uploaded_file = st.file_uploader("Choisissez un fichier à chiffrer", type=["png", "jpg", "txt", "pdf", "enc"])
 
     if st.button("Chiffrer"):
-        if uploaded_file and key:
-            file_info = encrypt_file(uploaded_file, key)
+        if uploaded_file and key_:
+            file_info = encrypt_file(uploaded_file, key_)
             st.success("Fichier chiffré !")
 
             # Convert encrypted file info to bytes and offer it for download
