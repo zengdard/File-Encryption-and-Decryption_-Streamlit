@@ -74,15 +74,30 @@ else:
     if st.button("Chiffrer"):
         if uploaded_file and key:
             file_info = encrypt_file(uploaded_file, key)
-                        st.success("Fichier chiffré !")
+            st.success("Fichier chiffré ! Vous pouvez le télécharger ici :")
+            _, extension = os.path.splitext(uploaded_file.name)
+            encrypted_file = io.BytesIO(b64encode(str(file_info).encode()))
+            st.download_button(
+                label="Télécharger le fichier chiffré",
+                data=encrypted_file,
+                file_name='encrypted_file.{extension}',
+                mime='text/plain'
+            )
 
-    uploaded_file = st.file_uploader("Choisissez un fichier à chiffrer", type=["png", "jpg", "txt", "pdf"])
 
     if st.button("Déchiffrer"):
         if  key:
             try:
                 decrypted_data = decrypt_file(eval(uploaded_file), key)
-                st.text(f"Fichier déchiffré : {decrypted_data}")
+                st.success("Fichier déchiffré ! Vous pouvez le télécharger ici :")
+                _, extension = os.path.splitext(uploaded_file.name)
+                encrypted_file = io.BytesIO(b64encode(str(file_info).encode()))
+                st.download_button(
+                    label="Télécharger le fichier chiffré",
+                    data=encrypted_file,
+                    file_name='encrypted_file.{extension}',
+                    mime='text/plain'
+                )
             except:
                 st.error("Une erreur est survenue lors du déchiffrement. Vérifiez la clé et les informations du fichier.")
 
