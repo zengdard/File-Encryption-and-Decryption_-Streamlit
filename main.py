@@ -111,7 +111,7 @@ else:
 
     if st.button("Déchiffrer"):
         if uploaded_file and key:
-            try:
+            #try:
                 decrypted_data, file_extension = decrypt_file(uploaded_file.read(), key)
                 decrypted_file = io.BytesIO(decrypted_data)
                 st.download_button(
@@ -120,5 +120,5 @@ else:
                     file_name=f'decrypted_file{file_extension}',
                     mime='application/octet-stream'
                 )
-            except:
-                st.error("Une erreur est survenue lors du déchiffrement. Vérifiez la clé et les informations du fichier.")
+            #except:
+              #  st.error("Une erreur est survenue lors du déchiffrement. Vérifiez la clé et les informations du fichier.")
