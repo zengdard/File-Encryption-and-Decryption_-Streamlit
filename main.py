@@ -36,6 +36,10 @@ def encrypt_file(file, key):
     return file_info
 
 def decrypt_file(file_info, key):
+    file_info_str = file_info.decode()
+
+    # Load string as JSON
+    file_info_dict = json.loads(file_info_str)
     nonce = b64decode(file_info['nonce'])
     tag = b64decode(file_info['tag'])
     ciphertext = b64decode(file_info['ciphertext'])
