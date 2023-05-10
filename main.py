@@ -70,7 +70,7 @@ else:
             key = get_random_bytes(32)
             st.success(f"Clé générée (Gardée la précieusement nous ne la sauvegarderons pas ! ): {b64encode(key).decode()}")
 
-    uploaded_file = st.file_uploader("Choisissez un fichier à chiffrer", type=["png", "jpg", "txt", "pdf", "enc])
+    uploaded_file = st.file_uploader("Choisissez un fichier à chiffrer", type=["png", "jpg", "txt", "pdf", "enc"])
 
     if st.button("Chiffrer"):
         if uploaded_file and key:
