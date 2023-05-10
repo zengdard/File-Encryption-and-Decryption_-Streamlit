@@ -90,7 +90,7 @@ else:
     key3 = st.text_input("Entrer votre clé de déchiffrement : ", value="")
     key_ = key3
     if st.button("Déchiffrer"):
-        st.write(b64encode(key_).decode())
+        st.write(key_)
         #key_ =  b64encode(key_).decode()
         if key_:
             key_ = hashlib.sha256(key_.encode()).digest()
