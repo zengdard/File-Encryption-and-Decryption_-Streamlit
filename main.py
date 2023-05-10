@@ -74,30 +74,35 @@ else:
     if st.button("Chiffrer"):
         if uploaded_file and key:
             file_info = encrypt_file(uploaded_file, key)
-            st.success("Fichier chiffré ! Vous pouvez le télécharger ici :")
-            _, extension = os.path.splitext(uploaded_file.name)
+            st.success("Fichier chiffré !")
+
+            # Convert encrypted file info to bytes and offer it for download
             encrypted_file = io.BytesIO(b64encode(str(file_info).encode()))
             st.download_button(
                 label="Télécharger le fichier chiffré",
                 data=encrypted_file,
-                file_name='encrypted_file.{extension}',
+                file_name=f'encrypted_file.enc',
                 mime='text/plain'
             )
 
 
     if st.button("Déchiffrer"):
-        if  key:
+        if key:
+            key = hashlib.sha256(key.encode()).digest()
             try:
-                decrypted_data = decrypt_file(eval(uploaded_file), key)
-                st.success("Fichier déchiffré ! Vous pouvez le télécharger ici :")
-                _, extension = os.path.splitext(uploaded_file.name)
-                encrypted_file = io.BytesIO(b64encode(str(file_info).encode()))
+                file_info = eval(file_info_text)
+                decrypted_data = decrypt_file(file_info, key)
+
+                # Get the file extension from the decrypted file info
+                file_extension = file_info['extension']
+
+                st.text(f"Fichier déchiffré : {decrypted_data}")
+                decrypted_file = io.BytesIO(decrypted_data)
                 st.download_button(
-                    label="Télécharger le fichier chiffré",
-                    data=encrypted_file,
-                    file_name='encrypted_file.{extension}',
-                    mime='text/plain'
+                    label="Télécharger le fichier déchiffré",
+                    data=decrypted_file,
+                    file_name=f'decrypted_file{file_extension}',
+                    mime='application/octet-stream'
                 )
             except:
                 st.error("Une erreur est survenue lors du déchiffrement. Vérifiez la clé et les informations du fichier.")
-
