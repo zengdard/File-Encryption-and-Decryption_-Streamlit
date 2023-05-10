@@ -28,23 +28,19 @@ def encrypt_file(file, key):
     data = file.getvalue()
     ciphertext = cipher.encrypt(data)
 
-    file_info = {
-        'nonce': cipher.nonce,
-        'ciphertext': ciphertext,
-        'extension': os.path.splitext(file.name)[1]
-    }
+    file_info = cipher.nonce + ciphertext
 
-    return pickle.dumps(file_info)
+    return file_info
 
 def decrypt_file(file_info, key):
-    file_info_dict = pickle.loads(file_info)
-    nonce = file_info_dict['nonce']
-    ciphertext = file_info_dict['ciphertext']
+    nonce = file_info[:8]
+    ciphertext = file_info[8:]
 
     cipher = ChaCha20.new(key=key, nonce=nonce)
     data = cipher.decrypt(ciphertext)
 
-    return data, file_info_dict['extension']
+    return data
+
 
 st.title("Moulin - Chiffrement et déchiffrement de textes et fichiers")
 
@@ -95,25 +91,24 @@ else:
             file_bytes = uploaded_file.read()
             file_to_encrypt = io.BytesIO(file_bytes)
 
-            encrypted_file_info = encrypt_file(file_to_encrypt, key)
+            encrypted_file = encrypt_file(file_to_encrypt, key)
             st.success("Fichier chiffré !")
 
-            # Offer the encrypted file info for download
+            # Offer the encrypted file for download
             st.download_button(
                 label="Télécharger le fichier chiffré",
-                data=encrypted_file_info,
-                file_name='encrypted_file.enc',
+                data=encrypted_file,
+                file_name=f'{uploaded_file.name}.enc',
                 mime='application/octet-stream'
             )
 
     if st.button("Déchiffrer"):
         if uploaded_file and key:
-            #try:
-                decrypted_data, file_extension = decrypt_file(uploaded_file.read(), key)
-                decrypted_file = io.BytesIO(decrypted_data)
-                st.download_button(
-                    label="Télécharger le fichier déchiffré",
-                    data=decrypted_file,
-                    file_name=f'decrypted_file{file_extension}',
-                    mime='application/octet-stream'
-                )
+            decrypted_data = decrypt_file(uploaded_file.read(), key)
+            decrypted_file = io.BytesIO(decrypted_data)
+            st.download_button(
+                label="Télécharger le fichier déchiffré",
+                data=decrypted_file,
+                file_name=f'decrypted_{uploaded_file.name}',
+                mime='application/octet-stream'
+            )
