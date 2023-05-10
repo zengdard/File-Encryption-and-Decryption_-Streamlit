@@ -5,7 +5,7 @@ from base64 import b64encode, b64decode
 import os
 import hashlib
 import io
-
+import json
 def encrypt_message(message, key):
     cipher = AES.new(key, AES.MODE_EAX)
     ciphertext, tag = cipher.encrypt_and_digest(message.encode())
@@ -18,17 +18,33 @@ def decrypt_message(message_info, key):
     data = cipher.decrypt_and_verify(ciphertext, tag)
     return data.decode()
 
+def get_key(key_str):
+    return hashlib.sha256(key_str.encode()).digest()
+
 def encrypt_file(file, key):
     cipher = AES.new(key, AES.MODE_EAX)
-    ciphertext, tag = cipher.encrypt_and_digest(file.read())
-    file_info = [cipher.nonce, tag, ciphertext]
+    data = file.getvalue()
+    ciphertext, tag = cipher.encrypt_and_digest(data)
+
+    file_info = {
+        'nonce': b64encode(cipher.nonce).decode(),
+        'tag': b64encode(tag).decode(),
+        'ciphertext': b64encode(ciphertext).decode(),
+        'extension': os.path.splitext(file.name)[1]
+    }
+
     return file_info
 
 def decrypt_file(file_info, key):
-    nonce, tag, ciphertext = file_info
+    nonce = b64decode(file_info['nonce'])
+    tag = b64decode(file_info['tag'])
+    ciphertext = b64decode(file_info['ciphertext'])
+
     cipher = AES.new(key, AES.MODE_EAX, nonce=nonce)
     data = cipher.decrypt_and_verify(ciphertext, tag)
-    return data
+
+    return data, file_info['extension']
+
 
 st.title("Moulin - Chiffrement et déchiffrement de textes et fichiers")
 
@@ -61,8 +77,10 @@ if page == "Chiffrement de texte":
                 st.error("Une erreur est survenue lors du déchiffrement. Vérifiez la clé et les informations du message.")
 else:
     st.header("Chiffrement et déchiffrement de fichiers")
-    
-    key_ = st.text_input("Entrer votre clé", value="")
+    key_input = st.text_input("Entrer votre clé de chiffrement")
+    key_ = get_key(key_input)
+
+
     if key_:
         key_ = hashlib.sha256(key_.encode()).digest()
     else :
@@ -75,40 +93,35 @@ else:
 
     if st.button("Chiffrer"):
         if uploaded_file and key_:
-            file_info = encrypt_file(uploaded_file, key_)
+            file_bytes = uploaded_file.read()
+            file_to_encrypt = io.BytesIO(file_bytes)
+
+            encrypted_file_info = encrypt_file(file_to_encrypt, key)
             st.success("Fichier chiffré !")
 
-            # Convert encrypted file info to bytes and offer it for download
-            encrypted_file = io.BytesIO(b64encode(str(file_info).encode()))
+            # Convert encrypted file info to string and encode it to bytes
+            encrypted_file_info_bytes = json.dumps(encrypted_file_info).encode()
+
+            # Offer the encrypted file info for download
             st.download_button(
                 label="Télécharger le fichier chiffré",
-                data=encrypted_file,
-                file_name=f'encrypted_file.enc',
+                data=encrypted_file_info_bytes,
+                file_name='encrypted_file.enc',
                 mime='text/plain'
             )
 
-    key3 = st.text_input("Entrer votre clé de déchiffrement : ", value="")
-    key_ = key3
     if st.button("Déchiffrer"):
+        
         st.write(key_)
-        #key_ =  b64encode(key_).decode()
-        if key_:
-            key_ = hashlib.sha256(key_.encode()).digest()
-            
-            try:
-                file_info = eval(file_info_text)
-                decrypted_data = decrypt_file(file_info, key_)
-
-                # Get the file extension from the decrypted file info
-                file_extension = file_info['extension']
-
-                st.text(f"Fichier déchiffré : {decrypted_data}")
-                decrypted_file = io.BytesIO(decrypted_data)
-                st.download_button(
-                    label="Télécharger le fichier déchiffré",
-                    data=decrypted_file,
-                    file_name=f'decrypted_file{file_extension}',
-                    mime='application/octet-stream'
-                )
-            except:
-                st.error("Une erreur est survenue lors du déchiffrement. Vérifiez la clé et les informations du fichier.")
+    
+        try:
+            decrypted_data, file_extension = decrypt_file(encrypted_file_info, key)
+            decrypted_file = io.BytesIO(decrypted_data)
+            st.download_button(
+                label="Télécharger le fichier déchiffré",
+                data=decrypted_file,
+                file_name=f'decrypted_file{file_extension}',
+                mime='application/octet-stream'
+            )
+        except:
+            st.error("Une erreur est survenue lors du déchiffrement. Vérifiez la clé et les informations du fichier.")
