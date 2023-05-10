@@ -77,7 +77,7 @@ if page == "Chiffrement de texte":
                 st.error("Une erreur est survenue lors du déchiffrement. Vérifiez la clé et les informations du message.")
 else:
     st.header("Chiffrement et déchiffrement de fichiers")
- 
+
     key_input = st.text_input("Entrer votre clé de chiffrement")
 
     if key_input:
@@ -98,15 +98,12 @@ else:
             encrypted_file_info = encrypt_file(file_to_encrypt, key)
             st.success("Fichier chiffré !")
 
-            # Convert encrypted file info to string and encode it to bytes
-            encrypted_file_info_bytes = json.dumps(encrypted_file_info).encode()
-
             # Offer the encrypted file info for download
             st.download_button(
                 label="Télécharger le fichier chiffré",
-                data=encrypted_file_info_bytes,
+                data=encrypted_file_info,
                 file_name='encrypted_file.enc',
-                mime='text/plain'
+                mime='application/octet-stream'
             )
 
     if st.button("Déchiffrer"):
@@ -120,5 +117,3 @@ else:
                     file_name=f'decrypted_file{file_extension}',
                     mime='application/octet-stream'
                 )
-            #except:
-              #  st.error("Une erreur est survenue lors du déchiffrement. Vérifiez la clé et les informations du fichier.")
