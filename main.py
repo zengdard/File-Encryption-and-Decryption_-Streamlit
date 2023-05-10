@@ -88,7 +88,8 @@ else:
 
 
     if st.button("Déchiffrer"):
-        
+        if key:
+            key = hashlib.sha256(key.encode()).digest()
             try:
                 file_info = eval(file_info_text)
                 decrypted_data = decrypt_file(file_info, key)
